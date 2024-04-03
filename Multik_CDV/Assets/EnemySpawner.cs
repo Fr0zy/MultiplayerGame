@@ -9,6 +9,7 @@ public class EnemySpawner : NetworkBehaviour
     [SerializeField] private float spawnRate = 2f;
     [SerializeField] private float enemySpeed = 1f;
     private float _counter = 0f;
+    private bool _initialized = false;
 
     public override void OnNetworkSpawn()
     {
@@ -19,6 +20,8 @@ public class EnemySpawner : NetworkBehaviour
             gameObject.SetActive(false);
             return;
         }
+
+        _initialized = true;
     }
 
     public void Update()
@@ -30,13 +33,16 @@ public class EnemySpawner : NetworkBehaviour
         else
         {
             _counter = 0;
-            var childIndex = Random.Range(0, transform.childCount - 1);
-            var child = transform.GetChild(Random.Range(0, transform.childCount - 1));
-            Rigidbody childRb = Instantiate(enemyPrefab, child).GetComponent<Rigidbody>();
+            var childIndex = Random.Range(0, transform.childCount);
+            var child = transform.GetChild(Random.Range(0, transform.childCount));
+
+            var spawned = NetworkManager.SpawnManager.InstantiateAndSpawn(enemyPrefab, NetworkManager.LocalClientId);
+            spawned.transform.position = child.position;
+            Rigidbody childRb = spawned.GetComponent<Rigidbody>();
+            
             childRb.isKinematic = false;
             childRb.velocity = (childIndex == 0 ? Vector3.right : Vector3.left) * enemySpeed;
             Destroy(childRb.gameObject, 5f);
         }
     }
-
 }

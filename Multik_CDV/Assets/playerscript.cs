@@ -74,6 +74,6 @@ public class playerscript : NetworkBehaviour
     [Rpc(SendTo.ClientsAndHost)]
     private void PlayerLostRPC(ulong clientID)
     {
-        NetworkManager.ConnectedClients[clientID].PlayerObject.gameObject.SetActive(false);
+        NetworkManager.ConnectedClients[clientID].PlayerObject.transform.position = new Vector3(0f, -30f, 0f);
     }
 }

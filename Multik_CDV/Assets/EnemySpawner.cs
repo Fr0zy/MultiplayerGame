@@ -38,6 +38,7 @@ public class EnemySpawner : NetworkBehaviour
 
             var spawned = NetworkManager.SpawnManager.InstantiateAndSpawn(enemyPrefab, NetworkManager.LocalClientId);
             spawned.transform.position = child.position;
+            spawned.transform.rotation = Quaternion.Euler(-90, 0, 0);
             Rigidbody childRb = spawned.GetComponent<Rigidbody>();
             
             childRb.isKinematic = false;

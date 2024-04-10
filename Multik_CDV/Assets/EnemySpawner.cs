@@ -26,24 +26,24 @@ public class EnemySpawner : NetworkBehaviour
 
     public void Update()
     {
-        if(_counter < spawnRate)
-        {
-            _counter += Time.deltaTime;
-        }
-        else
-        {
-            _counter = 0;
-            var childIndex = Random.Range(0, transform.childCount);
-            var child = transform.GetChild(Random.Range(0, transform.childCount));
+        if (!_initialized) return;
 
-            var spawned = NetworkManager.SpawnManager.InstantiateAndSpawn(enemyPrefab, NetworkManager.LocalClientId);
-            spawned.transform.position = child.position;
-            spawned.transform.rotation = Quaternion.Euler(-90, 0, 0);
-            Rigidbody childRb = spawned.GetComponent<Rigidbody>();
-            
-            childRb.isKinematic = false;
-            childRb.velocity = (childIndex == 0 ? Vector3.right : Vector3.left) * enemySpeed;
-            Destroy(childRb.gameObject, 5f);
+        _counter += Time.deltaTime;
+
+        if(_counter >= spawnRate) {
+        
+            _counter = 0f;
+            int spawnPointIndex =Random.Range(0, transform.childCount);
+            Transform spawnPoint = transform.GetChild(spawnPointIndex);
+
+            NetworkObject spawnedEnemy = NetworkManager.SpawnManager.InstantiateAndSpawn(enemyPrefab);
+            spawnedEnemy.transform.position = spawnPoint.position;
+            spawnedEnemy.transform.rotation = Quaternion.Euler(-90f, 0f, 0f);
+
+            Destroy(spawnedEnemy.gameObject, 5f);
+
+            Rigidbody enemyRb = spawnedEnemy.GetComponent<Rigidbody>();
+            enemyRb.velocity = (new Vector3(0, 0.5f, 0) - spawnedEnemy.transform.position).normalized * enemySpeed;
         }
     }
 }

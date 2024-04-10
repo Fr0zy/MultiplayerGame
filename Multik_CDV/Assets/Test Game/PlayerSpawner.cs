@@ -5,7 +5,7 @@ using Unity.Netcode;
 
 public class PlayerSpawner : NetworkBehaviour
 {
-    private int xOffset = 0;
+    private float xOffset = 0;
     
     public override void OnNetworkSpawn()
     {
@@ -17,14 +17,13 @@ public class PlayerSpawner : NetworkBehaviour
             return;
         }
 
-        NetworkManager.Singleton.OnClientConnectedCallback += OnOnClientConnected;
     }
 
-    private void OnOnClientConnected(ulong id)
+    public void SpawnPlayer(ulong clientID)
     {
-        NetworkObject player = NetworkManager.Singleton.ConnectedClients[id].PlayerObject;
-        player.gameObject.transform.position = new Vector3(xOffset, 0, 0);
+        xOffset = clientID * 2f;
 
-        xOffset += 2;
+        NetworkObject player = NetworkManager.Singleton.ConnectedClients[clientID].PlayerObject;
+        player.gameObject.transform.position = new Vector3(xOffset, 0, 0);
     }
 }

@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Unity.Netcode;
+using Unity.Netcode.Components;
 using JetBrains.Rider.Unity.Editor;
 
 public class playerscript : NetworkBehaviour
@@ -68,22 +69,8 @@ public class playerscript : NetworkBehaviour
     private void OnTriggerEnter(Collider other)
     {
         if (!IsHost) return;
-        NetworkManager.Singleton.DisconnectClient(NetworkManager.LocalClientId);
-    }
 
-    [Rpc(SendTo.ClientsAndHost)]
-    private void PlayerLostRPC(ulong clientID)
-    {
-        NetworkManager.ConnectedClients[clientID].PlayerObject.transform.position = new Vector3(0f, -30f, 0f);
-    }
-
-    private float xOffset = 0;
-
-    public void SpawnPlayer(ulong clientID)
-    {
-        NetworkObject player = NetworkManager.Singleton.ConnectedClients[clientID].PlayerObject;
-        player.gameObject.transform.position = new Vector3(xOffset,0,0);
-
-        xOffset = clientID * 2f;
+        transform.position = new Vector3 (0f, -17f, 0f);
+        FindObjectOfType<GameManager>().PlayerLostRPC();
     }
 }

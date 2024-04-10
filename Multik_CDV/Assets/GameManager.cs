@@ -5,9 +5,9 @@ using Unity.Netcode;
 
 public class GameManager : NetworkBehaviour
 {
-    [SerializeField] private int maxPlayers = 3;
+    [SerializeField] private int maxPlayers = 1;
 
-    [SerializeField] private playerscript playerSpawner;
+    [SerializeField] private PlayerSpawner playerSpawner;
     [SerializeField] private EnemySpawner enemySpawner;
 
     public override void OnNetworkSpawn()
@@ -31,5 +31,27 @@ public class GameManager : NetworkBehaviour
             return;
 
         enemySpawner.Isinitialized = true;
+    }
+
+    private int _playerLost = 0;
+    [Rpc(SendTo.Server)]
+    public void PlayerLostRPC()
+    {
+        _playerLost++;
+
+        if (_playerLost >= maxPlayers)
+        {
+            Debug.Log("The game should reset");
+
+            foreach (var clientID in NetworkManager.ConnectedClientsIds)
+            {
+                playerSpawner.SpawnPlayer(clientID);
+            }
+
+            enemySpawner.Reset();
+
+            _playerLost = 0;
+
+        }
     }
 }

@@ -8,6 +8,8 @@ public class EnemySpawner : NetworkBehaviour
     [SerializeField] private NetworkObject enemyPrefab;
     [SerializeField] private float spawnRate = 2f;
     [SerializeField] private float enemySpeed = 1f;
+    [SerializeField] private Transform enemiesParent;
+    
     private float _counter = 0f;
     public bool Isinitialized = false;
 
@@ -35,6 +37,7 @@ public class EnemySpawner : NetworkBehaviour
             Transform spawnPoint = transform.GetChild(spawnPointIndex);
 
             NetworkObject spawnedEnemy = NetworkManager.SpawnManager.InstantiateAndSpawn(enemyPrefab);
+            spawnedEnemy.transform.SetParent(enemiesParent);
             spawnedEnemy.transform.position = spawnPoint.position;
             spawnedEnemy.transform.rotation = Quaternion.Euler(-90f, 0f, 0f);
 
@@ -43,5 +46,11 @@ public class EnemySpawner : NetworkBehaviour
             Rigidbody enemyRb = spawnedEnemy.GetComponent<Rigidbody>();
             enemyRb.velocity = (new Vector3(0, 0.5f, 0) - spawnedEnemy.transform.position).normalized * enemySpeed;
         }
+    }
+
+    public void Reset()
+    {
+        _counter = 0f;
+        foreach (Transform child in enemiesParent) Destroy(child.gameObject);
     }
 }

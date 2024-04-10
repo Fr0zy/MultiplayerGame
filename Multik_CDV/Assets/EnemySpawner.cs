@@ -9,7 +9,7 @@ public class EnemySpawner : NetworkBehaviour
     [SerializeField] private float spawnRate = 2f;
     [SerializeField] private float enemySpeed = 1f;
     private float _counter = 0f;
-    private bool _initialized = false;
+    public bool Isinitialized = false;
 
     public override void OnNetworkSpawn()
     {
@@ -20,13 +20,11 @@ public class EnemySpawner : NetworkBehaviour
             gameObject.SetActive(false);
             return;
         }
-
-        _initialized = true;
     }
 
     public void Update()
     {
-        if (!_initialized) return;
+        if (!Isinitialized) return;
 
         _counter += Time.deltaTime;
 

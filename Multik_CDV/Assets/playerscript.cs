@@ -76,4 +76,14 @@ public class playerscript : NetworkBehaviour
     {
         NetworkManager.ConnectedClients[clientID].PlayerObject.transform.position = new Vector3(0f, -30f, 0f);
     }
+
+    private float xOffset = 0;
+
+    public void SpawnPlayer(ulong clientID)
+    {
+        NetworkObject player = NetworkManager.Singleton.ConnectedClients[clientID].PlayerObject;
+        player.gameObject.transform.position = new Vector3(xOffset,0,0);
+
+        xOffset = clientID * 2f;
+    }
 }
